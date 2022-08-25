@@ -1,0 +1,1416 @@
+
+GccApplication4.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         000002c4  00000000  00000000  00000054  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .data         00000000  00800060  00800060  00000318  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  2 .comment      00000030  00000000  00000000  00000318  2**0
+                  CONTENTS, READONLY
+  3 .note.gnu.avr.deviceinfo 0000003c  00000000  00000000  00000348  2**2
+                  CONTENTS, READONLY
+  4 .debug_aranges 00000020  00000000  00000000  00000384  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  5 .debug_info   00000619  00000000  00000000  000003a4  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_abbrev 00000535  00000000  00000000  000009bd  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_line   000005fc  00000000  00000000  00000ef2  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_frame  00000024  00000000  00000000  000014f0  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_str    00000316  00000000  00000000  00001514  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_loc    00000179  00000000  00000000  0000182a  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 11 .debug_ranges 00000010  00000000  00000000  000019a3  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	0c 94 2a 00 	jmp	0x54	; 0x54 <__ctors_end>
+   4:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+   8:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+   c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  10:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  14:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  18:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  1c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  20:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  24:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  28:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  2c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  30:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  34:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  38:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  3c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  40:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  44:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  48:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  4c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  50:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+
+00000054 <__ctors_end>:
+  54:	11 24       	eor	r1, r1
+  56:	1f be       	out	0x3f, r1	; 63
+  58:	cf e5       	ldi	r28, 0x5F	; 95
+  5a:	d8 e0       	ldi	r29, 0x08	; 8
+  5c:	de bf       	out	0x3e, r29	; 62
+  5e:	cd bf       	out	0x3d, r28	; 61
+  60:	0e 94 36 00 	call	0x6c	; 0x6c <main>
+  64:	0c 94 60 01 	jmp	0x2c0	; 0x2c0 <_exit>
+
+00000068 <__bad_interrupt>:
+  68:	0c 94 00 00 	jmp	0	; 0x0 <__vectors>
+
+0000006c <main>:
+#define MEM_TO_REG 7
+#define REG_DST 2
+#define REG_WR 3
+int main(void)
+{
+	MCUCSR= (1<< JTD);
+  6c:	80 e8       	ldi	r24, 0x80	; 128
+  6e:	84 bf       	out	0x34, r24	; 52
+	MCUCSR= (1<< JTD);
+  70:	84 bf       	out	0x34, r24	; 52
+
+	
+	unsigned char opcode,aluop,alusrc;
+	unsigned char jump,reg_dst,reg_wr,mem_read,mem_wr,mem_to_reg,beq,bneq;
+	unsigned char c;
+	DDRB=0b00001111;
+  72:	8f e0       	ldi	r24, 0x0F	; 15
+  74:	87 bb       	out	0x17, r24	; 23
+	DDRC=0xff;
+  76:	8f ef       	ldi	r24, 0xFF	; 255
+  78:	84 bb       	out	0x14, r24	; 20
+	DDRD=0xff;
+  7a:	81 bb       	out	0x11, r24	; 17
+	
+	
+	
+	while (1)
+	{
+		opcode=PINB;
+  7c:	86 b3       	in	r24, 0x16	; 22
+		opcode=opcode>>4;
+  7e:	82 95       	swap	r24
+  80:	8f 70       	andi	r24, 0x0F	; 15
+		if(opcode==0x00){//addi
+  82:	b1 f1       	breq	.+108    	; 0xf0 <main+0x84>
+			mem_to_reg = 0;
+			beq = 0;
+			bneq = 0;
+			
+		}
+		else if(opcode==0x01){//sll
+  84:	81 30       	cpi	r24, 0x01	; 1
+  86:	f1 f1       	breq	.+124    	; 0x104 <main+0x98>
+			mem_wr = 0;
+			mem_to_reg = 0;
+			beq = 0;
+			bneq = 0;
+		}
+		else if(opcode==0x02){//beq
+  88:	82 30       	cpi	r24, 0x02	; 2
+  8a:	09 f4       	brne	.+2      	; 0x8e <main+0x22>
+  8c:	45 c0       	rjmp	.+138    	; 0x118 <main+0xac>
+			mem_wr = 0;
+			mem_to_reg = 0;
+			beq = 1;
+			bneq = 0;
+		}
+		else if(opcode==0x03){//ori
+  8e:	83 30       	cpi	r24, 0x03	; 3
+  90:	09 f4       	brne	.+2      	; 0x94 <main+0x28>
+  92:	4c c0       	rjmp	.+152    	; 0x12c <main+0xc0>
+			mem_wr = 0;
+			mem_to_reg = 0;
+			beq = 0;
+			bneq = 0;
+		}
+		else if(opcode==0x04){//and
+  94:	84 30       	cpi	r24, 0x04	; 4
+  96:	09 f4       	brne	.+2      	; 0x9a <main+0x2e>
+  98:	53 c0       	rjmp	.+166    	; 0x140 <main+0xd4>
+			mem_wr = 0;
+			mem_to_reg = 0;
+			beq = 0;
+			bneq = 0;
+		}
+		else if(opcode==0x05){//nor
+  9a:	85 30       	cpi	r24, 0x05	; 5
+  9c:	09 f4       	brne	.+2      	; 0xa0 <main+0x34>
+  9e:	5a c0       	rjmp	.+180    	; 0x154 <main+0xe8>
+			mem_wr = 0;
+			mem_to_reg = 0;
+			beq = 0;
+			bneq = 0;
+		}
+		else if(opcode==0x06){//lw
+  a0:	86 30       	cpi	r24, 0x06	; 6
+  a2:	09 f4       	brne	.+2      	; 0xa6 <main+0x3a>
+  a4:	61 c0       	rjmp	.+194    	; 0x168 <main+0xfc>
+			mem_wr = 0;
+			mem_to_reg = 1;
+			beq = 0;
+			bneq = 0;
+		}
+		else if(opcode==0x07){//sw
+  a6:	87 30       	cpi	r24, 0x07	; 7
+  a8:	09 f4       	brne	.+2      	; 0xac <main+0x40>
+  aa:	68 c0       	rjmp	.+208    	; 0x17c <main+0x110>
+			mem_wr = 1;
+			mem_to_reg = 0;
+			beq = 0;
+			bneq = 0;
+		}
+		else if(opcode==0x08){//subi
+  ac:	88 30       	cpi	r24, 0x08	; 8
+  ae:	09 f4       	brne	.+2      	; 0xb2 <main+0x46>
+  b0:	6f c0       	rjmp	.+222    	; 0x190 <main+0x124>
+			mem_wr = 0;
+			mem_to_reg = 0;
+			beq = 0;
+			bneq = 0;
+		}
+		else if(opcode==0x09){//sub
+  b2:	89 30       	cpi	r24, 0x09	; 9
+  b4:	09 f4       	brne	.+2      	; 0xb8 <main+0x4c>
+  b6:	76 c0       	rjmp	.+236    	; 0x1a4 <main+0x138>
+			mem_wr = 0;
+			mem_to_reg = 0;
+			beq = 0;
+			bneq = 0;
+		}
+		else if(opcode==0x0A){//srl
+  b8:	8a 30       	cpi	r24, 0x0A	; 10
+  ba:	09 f4       	brne	.+2      	; 0xbe <main+0x52>
+  bc:	7d c0       	rjmp	.+250    	; 0x1b8 <main+0x14c>
+			mem_wr = 0;
+			mem_to_reg = 0;
+			beq = 0;
+			bneq = 0;
+		}
+		else if(opcode==0x0B){//bneq
+  be:	8b 30       	cpi	r24, 0x0B	; 11
+  c0:	09 f4       	brne	.+2      	; 0xc4 <main+0x58>
+  c2:	84 c0       	rjmp	.+264    	; 0x1cc <main+0x160>
+			mem_wr = 0;
+			mem_to_reg = 0;
+			beq = 0;
+			bneq = 1;
+		}
+		else if(opcode==0x0C){//or
+  c4:	8c 30       	cpi	r24, 0x0C	; 12
+  c6:	09 f4       	brne	.+2      	; 0xca <main+0x5e>
+  c8:	8b c0       	rjmp	.+278    	; 0x1e0 <main+0x174>
+			mem_wr = 0;
+			mem_to_reg = 0;
+			beq = 0;
+			bneq = 0;
+		}
+		else if(opcode==0x0D){//jmp
+  ca:	8d 30       	cpi	r24, 0x0D	; 13
+  cc:	09 f4       	brne	.+2      	; 0xd0 <main+0x64>
+  ce:	92 c0       	rjmp	.+292    	; 0x1f4 <main+0x188>
+			mem_wr = 0;
+			mem_to_reg = 0;
+			beq = 0;
+			bneq = 0;
+		}
+		else if(opcode==0x0E){//add
+  d0:	8e 30       	cpi	r24, 0x0E	; 14
+  d2:	09 f4       	brne	.+2      	; 0xd6 <main+0x6a>
+  d4:	99 c0       	rjmp	.+306    	; 0x208 <main+0x19c>
+			mem_wr = 0;
+			mem_to_reg = 0;
+			beq = 0;
+			bneq = 0;
+		}
+		else if(opcode==0x0F){//andi
+  d6:	8f 30       	cpi	r24, 0x0F	; 15
+  d8:	09 f0       	breq	.+2      	; 0xdc <main+0x70>
+  da:	a0 c0       	rjmp	.+320    	; 0x21c <main+0x1b0>
+			reg_wr = 1;
+			mem_read = 0;
+			mem_wr = 0;
+			mem_to_reg = 0;
+			beq = 0;
+			bneq = 0;
+  dc:	70 e0       	ldi	r23, 0x00	; 0
+			reg_dst = 0;
+			reg_wr = 1;
+			mem_read = 0;
+			mem_wr = 0;
+			mem_to_reg = 0;
+			beq = 0;
+  de:	b0 e0       	ldi	r27, 0x00	; 0
+			alusrc=1;
+			jump = 0;
+			reg_dst = 0;
+			reg_wr = 1;
+			mem_read = 0;
+			mem_wr = 0;
+  e0:	80 e0       	ldi	r24, 0x00	; 0
+			aluop=0b010;
+			alusrc=1;
+			jump = 0;
+			reg_dst = 0;
+			reg_wr = 1;
+			mem_read = 0;
+  e2:	90 e0       	ldi	r25, 0x00	; 0
+		else if(opcode==0x0F){//andi
+			aluop=0b010;
+			alusrc=1;
+			jump = 0;
+			reg_dst = 0;
+			reg_wr = 1;
+  e4:	31 e0       	ldi	r19, 0x01	; 1
+		}
+		else if(opcode==0x0F){//andi
+			aluop=0b010;
+			alusrc=1;
+			jump = 0;
+			reg_dst = 0;
+  e6:	40 e0       	ldi	r20, 0x00	; 0
+			bneq = 0;
+		}
+		else if(opcode==0x0F){//andi
+			aluop=0b010;
+			alusrc=1;
+			jump = 0;
+  e8:	50 e0       	ldi	r21, 0x00	; 0
+			beq = 0;
+			bneq = 0;
+		}
+		else if(opcode==0x0F){//andi
+			aluop=0b010;
+			alusrc=1;
+  ea:	21 e0       	ldi	r18, 0x01	; 1
+			mem_to_reg = 0;
+			beq = 0;
+			bneq = 0;
+		}
+		else if(opcode==0x0F){//andi
+			aluop=0b010;
+  ec:	a2 e0       	ldi	r26, 0x02	; 2
+  ee:	9f c0       	rjmp	.+318    	; 0x22e <main+0x1c2>
+			reg_wr = 1;
+			mem_read = 0;
+			mem_wr = 0;
+			mem_to_reg = 0;
+			beq = 0;
+			bneq = 0;
+  f0:	70 e0       	ldi	r23, 0x00	; 0
+			reg_dst = 0;
+			reg_wr = 1;
+			mem_read = 0;
+			mem_wr = 0;
+			mem_to_reg = 0;
+			beq = 0;
+  f2:	b0 e0       	ldi	r27, 0x00	; 0
+			alusrc=1;
+			jump = 0;
+			reg_dst = 0;
+			reg_wr = 1;
+			mem_read = 0;
+			mem_wr = 0;
+  f4:	80 e0       	ldi	r24, 0x00	; 0
+			aluop=0b000;
+			alusrc=1;
+			jump = 0;
+			reg_dst = 0;
+			reg_wr = 1;
+			mem_read = 0;
+  f6:	90 e0       	ldi	r25, 0x00	; 0
+		if(opcode==0x00){//addi
+			aluop=0b000;
+			alusrc=1;
+			jump = 0;
+			reg_dst = 0;
+			reg_wr = 1;
+  f8:	31 e0       	ldi	r19, 0x01	; 1
+		opcode=opcode>>4;
+		if(opcode==0x00){//addi
+			aluop=0b000;
+			alusrc=1;
+			jump = 0;
+			reg_dst = 0;
+  fa:	40 e0       	ldi	r20, 0x00	; 0
+		opcode=PINB;
+		opcode=opcode>>4;
+		if(opcode==0x00){//addi
+			aluop=0b000;
+			alusrc=1;
+			jump = 0;
+  fc:	50 e0       	ldi	r21, 0x00	; 0
+	{
+		opcode=PINB;
+		opcode=opcode>>4;
+		if(opcode==0x00){//addi
+			aluop=0b000;
+			alusrc=1;
+  fe:	21 e0       	ldi	r18, 0x01	; 1
+	while (1)
+	{
+		opcode=PINB;
+		opcode=opcode>>4;
+		if(opcode==0x00){//addi
+			aluop=0b000;
+ 100:	a0 e0       	ldi	r26, 0x00	; 0
+ 102:	95 c0       	rjmp	.+298    	; 0x22e <main+0x1c2>
+			reg_wr = 1;
+			mem_read = 0;
+			mem_wr = 0;
+			mem_to_reg = 0;
+			beq = 0;
+			bneq = 0;
+ 104:	70 e0       	ldi	r23, 0x00	; 0
+			reg_dst = 0;
+			reg_wr = 1;
+			mem_read = 0;
+			mem_wr = 0;
+			mem_to_reg = 0;
+			beq = 0;
+ 106:	b0 e0       	ldi	r27, 0x00	; 0
+			alusrc=1;
+			jump = 0;
+			reg_dst = 0;
+			reg_wr = 1;
+			mem_read = 0;
+			mem_wr = 0;
+ 108:	80 e0       	ldi	r24, 0x00	; 0
+			aluop=0b100;
+			alusrc=1;
+			jump = 0;
+			reg_dst = 0;
+			reg_wr = 1;
+			mem_read = 0;
+ 10a:	90 e0       	ldi	r25, 0x00	; 0
+		else if(opcode==0x01){//sll
+			aluop=0b100;
+			alusrc=1;
+			jump = 0;
+			reg_dst = 0;
+			reg_wr = 1;
+ 10c:	31 e0       	ldi	r19, 0x01	; 1
+		}
+		else if(opcode==0x01){//sll
+			aluop=0b100;
+			alusrc=1;
+			jump = 0;
+			reg_dst = 0;
+ 10e:	40 e0       	ldi	r20, 0x00	; 0
+			
+		}
+		else if(opcode==0x01){//sll
+			aluop=0b100;
+			alusrc=1;
+			jump = 0;
+ 110:	50 e0       	ldi	r21, 0x00	; 0
+			bneq = 0;
+			
+		}
+		else if(opcode==0x01){//sll
+			aluop=0b100;
+			alusrc=1;
+ 112:	21 e0       	ldi	r18, 0x01	; 1
+			beq = 0;
+			bneq = 0;
+			
+		}
+		else if(opcode==0x01){//sll
+			aluop=0b100;
+ 114:	a4 e0       	ldi	r26, 0x04	; 4
+ 116:	8b c0       	rjmp	.+278    	; 0x22e <main+0x1c2>
+			reg_wr = 0;
+			mem_read = 0;
+			mem_wr = 0;
+			mem_to_reg = 0;
+			beq = 1;
+			bneq = 0;
+ 118:	70 e0       	ldi	r23, 0x00	; 0
+			reg_dst = 0;
+			reg_wr = 0;
+			mem_read = 0;
+			mem_wr = 0;
+			mem_to_reg = 0;
+			beq = 1;
+ 11a:	b1 e0       	ldi	r27, 0x01	; 1
+			alusrc=0;
+			jump = 0;
+			reg_dst = 0;
+			reg_wr = 0;
+			mem_read = 0;
+			mem_wr = 0;
+ 11c:	80 e0       	ldi	r24, 0x00	; 0
+			aluop=0b001;
+			alusrc=0;
+			jump = 0;
+			reg_dst = 0;
+			reg_wr = 0;
+			mem_read = 0;
+ 11e:	90 e0       	ldi	r25, 0x00	; 0
+		else if(opcode==0x02){//beq
+			aluop=0b001;
+			alusrc=0;
+			jump = 0;
+			reg_dst = 0;
+			reg_wr = 0;
+ 120:	30 e0       	ldi	r19, 0x00	; 0
+		}
+		else if(opcode==0x02){//beq
+			aluop=0b001;
+			alusrc=0;
+			jump = 0;
+			reg_dst = 0;
+ 122:	40 e0       	ldi	r20, 0x00	; 0
+			bneq = 0;
+		}
+		else if(opcode==0x02){//beq
+			aluop=0b001;
+			alusrc=0;
+			jump = 0;
+ 124:	50 e0       	ldi	r21, 0x00	; 0
+			beq = 0;
+			bneq = 0;
+		}
+		else if(opcode==0x02){//beq
+			aluop=0b001;
+			alusrc=0;
+ 126:	20 e0       	ldi	r18, 0x00	; 0
+			mem_to_reg = 0;
+			beq = 0;
+			bneq = 0;
+		}
+		else if(opcode==0x02){//beq
+			aluop=0b001;
+ 128:	a1 e0       	ldi	r26, 0x01	; 1
+ 12a:	81 c0       	rjmp	.+258    	; 0x22e <main+0x1c2>
+			reg_wr = 1;
+			mem_read = 0;
+			mem_wr = 0;
+			mem_to_reg = 0;
+			beq = 0;
+			bneq = 0;
+ 12c:	70 e0       	ldi	r23, 0x00	; 0
+			reg_dst = 0;
+			reg_wr = 1;
+			mem_read = 0;
+			mem_wr = 0;
+			mem_to_reg = 0;
+			beq = 0;
+ 12e:	b0 e0       	ldi	r27, 0x00	; 0
+			alusrc=1;
+			jump = 0;
+			reg_dst = 0;
+			reg_wr = 1;
+			mem_read = 0;
+			mem_wr = 0;
+ 130:	80 e0       	ldi	r24, 0x00	; 0
+			aluop=0b011;
+			alusrc=1;
+			jump = 0;
+			reg_dst = 0;
+			reg_wr = 1;
+			mem_read = 0;
+ 132:	90 e0       	ldi	r25, 0x00	; 0
+		else if(opcode==0x03){//ori
+			aluop=0b011;
+			alusrc=1;
+			jump = 0;
+			reg_dst = 0;
+			reg_wr = 1;
+ 134:	31 e0       	ldi	r19, 0x01	; 1
+		}
+		else if(opcode==0x03){//ori
+			aluop=0b011;
+			alusrc=1;
+			jump = 0;
+			reg_dst = 0;
+ 136:	40 e0       	ldi	r20, 0x00	; 0
+			bneq = 0;
+		}
+		else if(opcode==0x03){//ori
+			aluop=0b011;
+			alusrc=1;
+			jump = 0;
+ 138:	50 e0       	ldi	r21, 0x00	; 0
+			beq = 1;
+			bneq = 0;
+		}
+		else if(opcode==0x03){//ori
+			aluop=0b011;
+			alusrc=1;
+ 13a:	21 e0       	ldi	r18, 0x01	; 1
+			mem_to_reg = 0;
+			beq = 1;
+			bneq = 0;
+		}
+		else if(opcode==0x03){//ori
+			aluop=0b011;
+ 13c:	a3 e0       	ldi	r26, 0x03	; 3
+ 13e:	77 c0       	rjmp	.+238    	; 0x22e <main+0x1c2>
+			reg_wr = 1;
+			mem_read = 0;
+			mem_wr = 0;
+			mem_to_reg = 0;
+			beq = 0;
+			bneq = 0;
+ 140:	70 e0       	ldi	r23, 0x00	; 0
+			reg_dst = 1;
+			reg_wr = 1;
+			mem_read = 0;
+			mem_wr = 0;
+			mem_to_reg = 0;
+			beq = 0;
+ 142:	b0 e0       	ldi	r27, 0x00	; 0
+			alusrc=0;
+			jump = 0;
+			reg_dst = 1;
+			reg_wr = 1;
+			mem_read = 0;
+			mem_wr = 0;
+ 144:	80 e0       	ldi	r24, 0x00	; 0
+			aluop=0b010;
+			alusrc=0;
+			jump = 0;
+			reg_dst = 1;
+			reg_wr = 1;
+			mem_read = 0;
+ 146:	90 e0       	ldi	r25, 0x00	; 0
+		else if(opcode==0x04){//and
+			aluop=0b010;
+			alusrc=0;
+			jump = 0;
+			reg_dst = 1;
+			reg_wr = 1;
+ 148:	31 e0       	ldi	r19, 0x01	; 1
+		}
+		else if(opcode==0x04){//and
+			aluop=0b010;
+			alusrc=0;
+			jump = 0;
+			reg_dst = 1;
+ 14a:	41 e0       	ldi	r20, 0x01	; 1
+			bneq = 0;
+		}
+		else if(opcode==0x04){//and
+			aluop=0b010;
+			alusrc=0;
+			jump = 0;
+ 14c:	50 e0       	ldi	r21, 0x00	; 0
+			beq = 0;
+			bneq = 0;
+		}
+		else if(opcode==0x04){//and
+			aluop=0b010;
+			alusrc=0;
+ 14e:	20 e0       	ldi	r18, 0x00	; 0
+			mem_to_reg = 0;
+			beq = 0;
+			bneq = 0;
+		}
+		else if(opcode==0x04){//and
+			aluop=0b010;
+ 150:	a2 e0       	ldi	r26, 0x02	; 2
+ 152:	6d c0       	rjmp	.+218    	; 0x22e <main+0x1c2>
+			reg_wr = 1;
+			mem_read = 0;
+			mem_wr = 0;
+			mem_to_reg = 0;
+			beq = 0;
+			bneq = 0;
+ 154:	70 e0       	ldi	r23, 0x00	; 0
+			reg_dst = 1;
+			reg_wr = 1;
+			mem_read = 0;
+			mem_wr = 0;
+			mem_to_reg = 0;
+			beq = 0;
+ 156:	b0 e0       	ldi	r27, 0x00	; 0
+			alusrc=0;
+			jump = 0;
+			reg_dst = 1;
+			reg_wr = 1;
+			mem_read = 0;
+			mem_wr = 0;
+ 158:	80 e0       	ldi	r24, 0x00	; 0
+			aluop=0b110;
+			alusrc=0;
+			jump = 0;
+			reg_dst = 1;
+			reg_wr = 1;
+			mem_read = 0;
+ 15a:	90 e0       	ldi	r25, 0x00	; 0
+		else if(opcode==0x05){//nor
+			aluop=0b110;
+			alusrc=0;
+			jump = 0;
+			reg_dst = 1;
+			reg_wr = 1;
+ 15c:	31 e0       	ldi	r19, 0x01	; 1
+		}
+		else if(opcode==0x05){//nor
+			aluop=0b110;
+			alusrc=0;
+			jump = 0;
+			reg_dst = 1;
+ 15e:	41 e0       	ldi	r20, 0x01	; 1
+			bneq = 0;
+		}
+		else if(opcode==0x05){//nor
+			aluop=0b110;
+			alusrc=0;
+			jump = 0;
+ 160:	50 e0       	ldi	r21, 0x00	; 0
+			beq = 0;
+			bneq = 0;
+		}
+		else if(opcode==0x05){//nor
+			aluop=0b110;
+			alusrc=0;
+ 162:	20 e0       	ldi	r18, 0x00	; 0
+			mem_to_reg = 0;
+			beq = 0;
+			bneq = 0;
+		}
+		else if(opcode==0x05){//nor
+			aluop=0b110;
+ 164:	a6 e0       	ldi	r26, 0x06	; 6
+ 166:	63 c0       	rjmp	.+198    	; 0x22e <main+0x1c2>
+			reg_wr = 1;
+			mem_read = 1;
+			mem_wr = 0;
+			mem_to_reg = 1;
+			beq = 0;
+			bneq = 0;
+ 168:	70 e0       	ldi	r23, 0x00	; 0
+			reg_dst = 0;
+			reg_wr = 1;
+			mem_read = 1;
+			mem_wr = 0;
+			mem_to_reg = 1;
+			beq = 0;
+ 16a:	b0 e0       	ldi	r27, 0x00	; 0
+			alusrc=1;
+			jump = 0;
+			reg_dst = 0;
+			reg_wr = 1;
+			mem_read = 1;
+			mem_wr = 0;
+ 16c:	80 e0       	ldi	r24, 0x00	; 0
+			aluop=0b000;
+			alusrc=1;
+			jump = 0;
+			reg_dst = 0;
+			reg_wr = 1;
+			mem_read = 1;
+ 16e:	91 e0       	ldi	r25, 0x01	; 1
+		else if(opcode==0x06){//lw
+			aluop=0b000;
+			alusrc=1;
+			jump = 0;
+			reg_dst = 0;
+			reg_wr = 1;
+ 170:	31 e0       	ldi	r19, 0x01	; 1
+		}
+		else if(opcode==0x06){//lw
+			aluop=0b000;
+			alusrc=1;
+			jump = 0;
+			reg_dst = 0;
+ 172:	40 e0       	ldi	r20, 0x00	; 0
+			bneq = 0;
+		}
+		else if(opcode==0x06){//lw
+			aluop=0b000;
+			alusrc=1;
+			jump = 0;
+ 174:	50 e0       	ldi	r21, 0x00	; 0
+			beq = 0;
+			bneq = 0;
+		}
+		else if(opcode==0x06){//lw
+			aluop=0b000;
+			alusrc=1;
+ 176:	21 e0       	ldi	r18, 0x01	; 1
+			mem_to_reg = 0;
+			beq = 0;
+			bneq = 0;
+		}
+		else if(opcode==0x06){//lw
+			aluop=0b000;
+ 178:	a0 e0       	ldi	r26, 0x00	; 0
+ 17a:	59 c0       	rjmp	.+178    	; 0x22e <main+0x1c2>
+			reg_wr = 0;
+			mem_read = 0;
+			mem_wr = 1;
+			mem_to_reg = 0;
+			beq = 0;
+			bneq = 0;
+ 17c:	70 e0       	ldi	r23, 0x00	; 0
+			reg_dst = 0;
+			reg_wr = 0;
+			mem_read = 0;
+			mem_wr = 1;
+			mem_to_reg = 0;
+			beq = 0;
+ 17e:	b0 e0       	ldi	r27, 0x00	; 0
+			alusrc=1;
+			jump = 0;
+			reg_dst = 0;
+			reg_wr = 0;
+			mem_read = 0;
+			mem_wr = 1;
+ 180:	81 e0       	ldi	r24, 0x01	; 1
+			aluop=0b000;
+			alusrc=1;
+			jump = 0;
+			reg_dst = 0;
+			reg_wr = 0;
+			mem_read = 0;
+ 182:	90 e0       	ldi	r25, 0x00	; 0
+		else if(opcode==0x07){//sw
+			aluop=0b000;
+			alusrc=1;
+			jump = 0;
+			reg_dst = 0;
+			reg_wr = 0;
+ 184:	30 e0       	ldi	r19, 0x00	; 0
+		}
+		else if(opcode==0x07){//sw
+			aluop=0b000;
+			alusrc=1;
+			jump = 0;
+			reg_dst = 0;
+ 186:	40 e0       	ldi	r20, 0x00	; 0
+			bneq = 0;
+		}
+		else if(opcode==0x07){//sw
+			aluop=0b000;
+			alusrc=1;
+			jump = 0;
+ 188:	50 e0       	ldi	r21, 0x00	; 0
+			beq = 0;
+			bneq = 0;
+		}
+		else if(opcode==0x07){//sw
+			aluop=0b000;
+			alusrc=1;
+ 18a:	21 e0       	ldi	r18, 0x01	; 1
+			mem_to_reg = 1;
+			beq = 0;
+			bneq = 0;
+		}
+		else if(opcode==0x07){//sw
+			aluop=0b000;
+ 18c:	a0 e0       	ldi	r26, 0x00	; 0
+ 18e:	4f c0       	rjmp	.+158    	; 0x22e <main+0x1c2>
+			reg_wr = 1;
+			mem_read = 0;
+			mem_wr = 0;
+			mem_to_reg = 0;
+			beq = 0;
+			bneq = 0;
+ 190:	70 e0       	ldi	r23, 0x00	; 0
+			reg_dst = 0;
+			reg_wr = 1;
+			mem_read = 0;
+			mem_wr = 0;
+			mem_to_reg = 0;
+			beq = 0;
+ 192:	b0 e0       	ldi	r27, 0x00	; 0
+			alusrc=1;
+			jump = 0;
+			reg_dst = 0;
+			reg_wr = 1;
+			mem_read = 0;
+			mem_wr = 0;
+ 194:	80 e0       	ldi	r24, 0x00	; 0
+			aluop=0b001;
+			alusrc=1;
+			jump = 0;
+			reg_dst = 0;
+			reg_wr = 1;
+			mem_read = 0;
+ 196:	90 e0       	ldi	r25, 0x00	; 0
+		else if(opcode==0x08){//subi
+			aluop=0b001;
+			alusrc=1;
+			jump = 0;
+			reg_dst = 0;
+			reg_wr = 1;
+ 198:	31 e0       	ldi	r19, 0x01	; 1
+		}
+		else if(opcode==0x08){//subi
+			aluop=0b001;
+			alusrc=1;
+			jump = 0;
+			reg_dst = 0;
+ 19a:	40 e0       	ldi	r20, 0x00	; 0
+			bneq = 0;
+		}
+		else if(opcode==0x08){//subi
+			aluop=0b001;
+			alusrc=1;
+			jump = 0;
+ 19c:	50 e0       	ldi	r21, 0x00	; 0
+			beq = 0;
+			bneq = 0;
+		}
+		else if(opcode==0x08){//subi
+			aluop=0b001;
+			alusrc=1;
+ 19e:	21 e0       	ldi	r18, 0x01	; 1
+			mem_to_reg = 0;
+			beq = 0;
+			bneq = 0;
+		}
+		else if(opcode==0x08){//subi
+			aluop=0b001;
+ 1a0:	a1 e0       	ldi	r26, 0x01	; 1
+ 1a2:	45 c0       	rjmp	.+138    	; 0x22e <main+0x1c2>
+			reg_wr = 1;
+			mem_read = 0;
+			mem_wr = 0;
+			mem_to_reg = 0;
+			beq = 0;
+			bneq = 0;
+ 1a4:	70 e0       	ldi	r23, 0x00	; 0
+			reg_dst = 1;
+			reg_wr = 1;
+			mem_read = 0;
+			mem_wr = 0;
+			mem_to_reg = 0;
+			beq = 0;
+ 1a6:	b0 e0       	ldi	r27, 0x00	; 0
+			alusrc=0;
+			jump = 0;
+			reg_dst = 1;
+			reg_wr = 1;
+			mem_read = 0;
+			mem_wr = 0;
+ 1a8:	80 e0       	ldi	r24, 0x00	; 0
+			aluop=0b001;
+			alusrc=0;
+			jump = 0;
+			reg_dst = 1;
+			reg_wr = 1;
+			mem_read = 0;
+ 1aa:	90 e0       	ldi	r25, 0x00	; 0
+		else if(opcode==0x09){//sub
+			aluop=0b001;
+			alusrc=0;
+			jump = 0;
+			reg_dst = 1;
+			reg_wr = 1;
+ 1ac:	31 e0       	ldi	r19, 0x01	; 1
+		}
+		else if(opcode==0x09){//sub
+			aluop=0b001;
+			alusrc=0;
+			jump = 0;
+			reg_dst = 1;
+ 1ae:	41 e0       	ldi	r20, 0x01	; 1
+			bneq = 0;
+		}
+		else if(opcode==0x09){//sub
+			aluop=0b001;
+			alusrc=0;
+			jump = 0;
+ 1b0:	50 e0       	ldi	r21, 0x00	; 0
+			beq = 0;
+			bneq = 0;
+		}
+		else if(opcode==0x09){//sub
+			aluop=0b001;
+			alusrc=0;
+ 1b2:	20 e0       	ldi	r18, 0x00	; 0
+			mem_to_reg = 0;
+			beq = 0;
+			bneq = 0;
+		}
+		else if(opcode==0x09){//sub
+			aluop=0b001;
+ 1b4:	a1 e0       	ldi	r26, 0x01	; 1
+ 1b6:	3b c0       	rjmp	.+118    	; 0x22e <main+0x1c2>
+			reg_wr = 1;
+			mem_read = 0;
+			mem_wr = 0;
+			mem_to_reg = 0;
+			beq = 0;
+			bneq = 0;
+ 1b8:	70 e0       	ldi	r23, 0x00	; 0
+			reg_dst = 0;
+			reg_wr = 1;
+			mem_read = 0;
+			mem_wr = 0;
+			mem_to_reg = 0;
+			beq = 0;
+ 1ba:	b0 e0       	ldi	r27, 0x00	; 0
+			alusrc=1;
+			jump = 0;
+			reg_dst = 0;
+			reg_wr = 1;
+			mem_read = 0;
+			mem_wr = 0;
+ 1bc:	80 e0       	ldi	r24, 0x00	; 0
+			aluop=0b101;
+			alusrc=1;
+			jump = 0;
+			reg_dst = 0;
+			reg_wr = 1;
+			mem_read = 0;
+ 1be:	90 e0       	ldi	r25, 0x00	; 0
+		else if(opcode==0x0A){//srl
+			aluop=0b101;
+			alusrc=1;
+			jump = 0;
+			reg_dst = 0;
+			reg_wr = 1;
+ 1c0:	31 e0       	ldi	r19, 0x01	; 1
+		}
+		else if(opcode==0x0A){//srl
+			aluop=0b101;
+			alusrc=1;
+			jump = 0;
+			reg_dst = 0;
+ 1c2:	40 e0       	ldi	r20, 0x00	; 0
+			bneq = 0;
+		}
+		else if(opcode==0x0A){//srl
+			aluop=0b101;
+			alusrc=1;
+			jump = 0;
+ 1c4:	50 e0       	ldi	r21, 0x00	; 0
+			beq = 0;
+			bneq = 0;
+		}
+		else if(opcode==0x0A){//srl
+			aluop=0b101;
+			alusrc=1;
+ 1c6:	21 e0       	ldi	r18, 0x01	; 1
+			mem_to_reg = 0;
+			beq = 0;
+			bneq = 0;
+		}
+		else if(opcode==0x0A){//srl
+			aluop=0b101;
+ 1c8:	a5 e0       	ldi	r26, 0x05	; 5
+ 1ca:	31 c0       	rjmp	.+98     	; 0x22e <main+0x1c2>
+			reg_wr = 0;
+			mem_read = 0;
+			mem_wr = 0;
+			mem_to_reg = 0;
+			beq = 0;
+			bneq = 1;
+ 1cc:	71 e0       	ldi	r23, 0x01	; 1
+			reg_dst = 0;
+			reg_wr = 0;
+			mem_read = 0;
+			mem_wr = 0;
+			mem_to_reg = 0;
+			beq = 0;
+ 1ce:	b0 e0       	ldi	r27, 0x00	; 0
+			alusrc=0;
+			jump = 0;
+			reg_dst = 0;
+			reg_wr = 0;
+			mem_read = 0;
+			mem_wr = 0;
+ 1d0:	80 e0       	ldi	r24, 0x00	; 0
+			aluop=0b001;
+			alusrc=0;
+			jump = 0;
+			reg_dst = 0;
+			reg_wr = 0;
+			mem_read = 0;
+ 1d2:	90 e0       	ldi	r25, 0x00	; 0
+		else if(opcode==0x0B){//bneq
+			aluop=0b001;
+			alusrc=0;
+			jump = 0;
+			reg_dst = 0;
+			reg_wr = 0;
+ 1d4:	30 e0       	ldi	r19, 0x00	; 0
+		}
+		else if(opcode==0x0B){//bneq
+			aluop=0b001;
+			alusrc=0;
+			jump = 0;
+			reg_dst = 0;
+ 1d6:	40 e0       	ldi	r20, 0x00	; 0
+			bneq = 0;
+		}
+		else if(opcode==0x0B){//bneq
+			aluop=0b001;
+			alusrc=0;
+			jump = 0;
+ 1d8:	50 e0       	ldi	r21, 0x00	; 0
+			beq = 0;
+			bneq = 0;
+		}
+		else if(opcode==0x0B){//bneq
+			aluop=0b001;
+			alusrc=0;
+ 1da:	20 e0       	ldi	r18, 0x00	; 0
+			mem_to_reg = 0;
+			beq = 0;
+			bneq = 0;
+		}
+		else if(opcode==0x0B){//bneq
+			aluop=0b001;
+ 1dc:	a1 e0       	ldi	r26, 0x01	; 1
+ 1de:	27 c0       	rjmp	.+78     	; 0x22e <main+0x1c2>
+			reg_wr = 1;
+			mem_read = 0;
+			mem_wr = 0;
+			mem_to_reg = 0;
+			beq = 0;
+			bneq = 0;
+ 1e0:	70 e0       	ldi	r23, 0x00	; 0
+			reg_dst = 1;
+			reg_wr = 1;
+			mem_read = 0;
+			mem_wr = 0;
+			mem_to_reg = 0;
+			beq = 0;
+ 1e2:	b0 e0       	ldi	r27, 0x00	; 0
+			alusrc=0;
+			jump = 0;
+			reg_dst = 1;
+			reg_wr = 1;
+			mem_read = 0;
+			mem_wr = 0;
+ 1e4:	80 e0       	ldi	r24, 0x00	; 0
+			aluop=0b011;
+			alusrc=0;
+			jump = 0;
+			reg_dst = 1;
+			reg_wr = 1;
+			mem_read = 0;
+ 1e6:	90 e0       	ldi	r25, 0x00	; 0
+		else if(opcode==0x0C){//or
+			aluop=0b011;
+			alusrc=0;
+			jump = 0;
+			reg_dst = 1;
+			reg_wr = 1;
+ 1e8:	31 e0       	ldi	r19, 0x01	; 1
+		}
+		else if(opcode==0x0C){//or
+			aluop=0b011;
+			alusrc=0;
+			jump = 0;
+			reg_dst = 1;
+ 1ea:	41 e0       	ldi	r20, 0x01	; 1
+			bneq = 1;
+		}
+		else if(opcode==0x0C){//or
+			aluop=0b011;
+			alusrc=0;
+			jump = 0;
+ 1ec:	50 e0       	ldi	r21, 0x00	; 0
+			beq = 0;
+			bneq = 1;
+		}
+		else if(opcode==0x0C){//or
+			aluop=0b011;
+			alusrc=0;
+ 1ee:	20 e0       	ldi	r18, 0x00	; 0
+			mem_to_reg = 0;
+			beq = 0;
+			bneq = 1;
+		}
+		else if(opcode==0x0C){//or
+			aluop=0b011;
+ 1f0:	a3 e0       	ldi	r26, 0x03	; 3
+ 1f2:	1d c0       	rjmp	.+58     	; 0x22e <main+0x1c2>
+			reg_wr = 0;
+			mem_read = 0;
+			mem_wr = 0;
+			mem_to_reg = 0;
+			beq = 0;
+			bneq = 0;
+ 1f4:	70 e0       	ldi	r23, 0x00	; 0
+			reg_dst = 0;
+			reg_wr = 0;
+			mem_read = 0;
+			mem_wr = 0;
+			mem_to_reg = 0;
+			beq = 0;
+ 1f6:	b0 e0       	ldi	r27, 0x00	; 0
+			alusrc=0;
+			jump = 1;
+			reg_dst = 0;
+			reg_wr = 0;
+			mem_read = 0;
+			mem_wr = 0;
+ 1f8:	80 e0       	ldi	r24, 0x00	; 0
+			aluop=0b000;
+			alusrc=0;
+			jump = 1;
+			reg_dst = 0;
+			reg_wr = 0;
+			mem_read = 0;
+ 1fa:	90 e0       	ldi	r25, 0x00	; 0
+		else if(opcode==0x0D){//jmp
+			aluop=0b000;
+			alusrc=0;
+			jump = 1;
+			reg_dst = 0;
+			reg_wr = 0;
+ 1fc:	30 e0       	ldi	r19, 0x00	; 0
+		}
+		else if(opcode==0x0D){//jmp
+			aluop=0b000;
+			alusrc=0;
+			jump = 1;
+			reg_dst = 0;
+ 1fe:	40 e0       	ldi	r20, 0x00	; 0
+			bneq = 0;
+		}
+		else if(opcode==0x0D){//jmp
+			aluop=0b000;
+			alusrc=0;
+			jump = 1;
+ 200:	51 e0       	ldi	r21, 0x01	; 1
+			beq = 0;
+			bneq = 0;
+		}
+		else if(opcode==0x0D){//jmp
+			aluop=0b000;
+			alusrc=0;
+ 202:	20 e0       	ldi	r18, 0x00	; 0
+			mem_to_reg = 0;
+			beq = 0;
+			bneq = 0;
+		}
+		else if(opcode==0x0D){//jmp
+			aluop=0b000;
+ 204:	a0 e0       	ldi	r26, 0x00	; 0
+ 206:	13 c0       	rjmp	.+38     	; 0x22e <main+0x1c2>
+			reg_wr = 1;
+			mem_read = 0;
+			mem_wr = 0;
+			mem_to_reg = 0;
+			beq = 0;
+			bneq = 0;
+ 208:	70 e0       	ldi	r23, 0x00	; 0
+			reg_dst = 1;
+			reg_wr = 1;
+			mem_read = 0;
+			mem_wr = 0;
+			mem_to_reg = 0;
+			beq = 0;
+ 20a:	b0 e0       	ldi	r27, 0x00	; 0
+			alusrc=0;
+			jump = 0;
+			reg_dst = 1;
+			reg_wr = 1;
+			mem_read = 0;
+			mem_wr = 0;
+ 20c:	80 e0       	ldi	r24, 0x00	; 0
+			aluop=0b000;
+			alusrc=0;
+			jump = 0;
+			reg_dst = 1;
+			reg_wr = 1;
+			mem_read = 0;
+ 20e:	90 e0       	ldi	r25, 0x00	; 0
+		else if(opcode==0x0E){//add
+			aluop=0b000;
+			alusrc=0;
+			jump = 0;
+			reg_dst = 1;
+			reg_wr = 1;
+ 210:	31 e0       	ldi	r19, 0x01	; 1
+		}
+		else if(opcode==0x0E){//add
+			aluop=0b000;
+			alusrc=0;
+			jump = 0;
+			reg_dst = 1;
+ 212:	41 e0       	ldi	r20, 0x01	; 1
+			bneq = 0;
+		}
+		else if(opcode==0x0E){//add
+			aluop=0b000;
+			alusrc=0;
+			jump = 0;
+ 214:	50 e0       	ldi	r21, 0x00	; 0
+			beq = 0;
+			bneq = 0;
+		}
+		else if(opcode==0x0E){//add
+			aluop=0b000;
+			alusrc=0;
+ 216:	20 e0       	ldi	r18, 0x00	; 0
+			mem_to_reg = 0;
+			beq = 0;
+			bneq = 0;
+		}
+		else if(opcode==0x0E){//add
+			aluop=0b000;
+ 218:	a0 e0       	ldi	r26, 0x00	; 0
+ 21a:	09 c0       	rjmp	.+18     	; 0x22e <main+0x1c2>
+			reg_wr = 0;
+			mem_read = 0;
+			mem_wr = 0;
+			mem_to_reg = 0;
+			beq = 0;
+			bneq = 0;
+ 21c:	70 e0       	ldi	r23, 0x00	; 0
+			reg_dst = 0;
+			reg_wr = 0;
+			mem_read = 0;
+			mem_wr = 0;
+			mem_to_reg = 0;
+			beq = 0;
+ 21e:	b0 e0       	ldi	r27, 0x00	; 0
+			alusrc=0;
+			jump = 0;
+			reg_dst = 0;
+			reg_wr = 0;
+			mem_read = 0;
+			mem_wr = 0;
+ 220:	80 e0       	ldi	r24, 0x00	; 0
+			aluop=0b000;
+			alusrc=0;
+			jump = 0;
+			reg_dst = 0;
+			reg_wr = 0;
+			mem_read = 0;
+ 222:	90 e0       	ldi	r25, 0x00	; 0
+		} else {
+			aluop=0b000;
+			alusrc=0;
+			jump = 0;
+			reg_dst = 0;
+			reg_wr = 0;
+ 224:	30 e0       	ldi	r19, 0x00	; 0
+			bneq = 0;
+		} else {
+			aluop=0b000;
+			alusrc=0;
+			jump = 0;
+			reg_dst = 0;
+ 226:	40 e0       	ldi	r20, 0x00	; 0
+			beq = 0;
+			bneq = 0;
+		} else {
+			aluop=0b000;
+			alusrc=0;
+			jump = 0;
+ 228:	50 e0       	ldi	r21, 0x00	; 0
+			mem_to_reg = 0;
+			beq = 0;
+			bneq = 0;
+		} else {
+			aluop=0b000;
+			alusrc=0;
+ 22a:	20 e0       	ldi	r18, 0x00	; 0
+			mem_wr = 0;
+			mem_to_reg = 0;
+			beq = 0;
+			bneq = 0;
+		} else {
+			aluop=0b000;
+ 22c:	a0 e0       	ldi	r26, 0x00	; 0
+			mem_to_reg = 0;
+			beq = 0;
+			bneq = 0;
+		}
+		
+		c = 0x00 | (beq << BEQ) | (bneq << BNEQ) | (jump << JMP);
+ 22e:	e7 2f       	mov	r30, r23
+ 230:	f0 e0       	ldi	r31, 0x00	; 0
+ 232:	ee 0f       	add	r30, r30
+ 234:	ff 1f       	adc	r31, r31
+ 236:	65 2f       	mov	r22, r21
+ 238:	70 e0       	ldi	r23, 0x00	; 0
+ 23a:	66 0f       	add	r22, r22
+ 23c:	77 1f       	adc	r23, r23
+ 23e:	66 0f       	add	r22, r22
+ 240:	77 1f       	adc	r23, r23
+ 242:	eb 2b       	or	r30, r27
+ 244:	6e 2b       	or	r22, r30
+		PORTB = c;
+ 246:	68 bb       	out	0x18, r22	; 24
+		c = 0x00 | (mem_wr << MEM_WR) | (mem_read << MEM_READ) | (mem_to_reg << MEM_TO_REG);
+ 248:	68 2f       	mov	r22, r24
+ 24a:	70 e0       	ldi	r23, 0x00	; 0
+ 24c:	66 0f       	add	r22, r22
+ 24e:	77 1f       	adc	r23, r23
+ 250:	62 95       	swap	r22
+ 252:	72 95       	swap	r23
+ 254:	70 7f       	andi	r23, 0xF0	; 240
+ 256:	76 27       	eor	r23, r22
+ 258:	60 7f       	andi	r22, 0xF0	; 240
+ 25a:	76 27       	eor	r23, r22
+ 25c:	89 2f       	mov	r24, r25
+ 25e:	90 e0       	ldi	r25, 0x00	; 0
+ 260:	fc 01       	movw	r30, r24
+ 262:	00 24       	eor	r0, r0
+ 264:	f6 95       	lsr	r31
+ 266:	e7 95       	ror	r30
+ 268:	07 94       	ror	r0
+ 26a:	f6 95       	lsr	r31
+ 26c:	e7 95       	ror	r30
+ 26e:	07 94       	ror	r0
+ 270:	fe 2f       	mov	r31, r30
+ 272:	e0 2d       	mov	r30, r0
+ 274:	96 95       	lsr	r25
+ 276:	98 2f       	mov	r25, r24
+ 278:	88 27       	eor	r24, r24
+ 27a:	97 95       	ror	r25
+ 27c:	87 95       	ror	r24
+ 27e:	6e 2b       	or	r22, r30
+ 280:	86 2b       	or	r24, r22
+		PORTC = c;
+ 282:	85 bb       	out	0x15, r24	; 21
+		c = 0x00 | (reg_dst << REG_DST) | (reg_wr << REG_WR) | (aluop << ALU_OP) | (alusrc << ALU_SRC);
+ 284:	50 e0       	ldi	r21, 0x00	; 0
+ 286:	fa 01       	movw	r30, r20
+ 288:	ee 0f       	add	r30, r30
+ 28a:	ff 1f       	adc	r31, r31
+ 28c:	ee 0f       	add	r30, r30
+ 28e:	ff 1f       	adc	r31, r31
+ 290:	43 2f       	mov	r20, r19
+ 292:	50 e0       	ldi	r21, 0x00	; 0
+ 294:	44 0f       	add	r20, r20
+ 296:	55 1f       	adc	r21, r21
+ 298:	44 0f       	add	r20, r20
+ 29a:	55 1f       	adc	r21, r21
+ 29c:	44 0f       	add	r20, r20
+ 29e:	55 1f       	adc	r21, r21
+ 2a0:	80 e1       	ldi	r24, 0x10	; 16
+ 2a2:	a8 9f       	mul	r26, r24
+ 2a4:	b0 01       	movw	r22, r0
+ 2a6:	11 24       	eor	r1, r1
+ 2a8:	82 2f       	mov	r24, r18
+ 2aa:	90 e0       	ldi	r25, 0x00	; 0
+ 2ac:	96 95       	lsr	r25
+ 2ae:	98 2f       	mov	r25, r24
+ 2b0:	88 27       	eor	r24, r24
+ 2b2:	97 95       	ror	r25
+ 2b4:	87 95       	ror	r24
+ 2b6:	4e 2b       	or	r20, r30
+ 2b8:	46 2b       	or	r20, r22
+ 2ba:	84 2b       	or	r24, r20
+		PORTD = c;
+ 2bc:	82 bb       	out	0x12, r24	; 18
+	}
+ 2be:	de ce       	rjmp	.-580    	; 0x7c <main+0x10>
+
+000002c0 <_exit>:
+ 2c0:	f8 94       	cli
+
+000002c2 <__stop_program>:
+ 2c2:	ff cf       	rjmp	.-2      	; 0x2c2 <__stop_program>
