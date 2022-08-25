@@ -1,0 +1,246 @@
+
+GccApplication4.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         00000144  00000000  00000000  00000054  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .data         00000000  00800060  00800060  00000198  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  2 .comment      00000030  00000000  00000000  00000198  2**0
+                  CONTENTS, READONLY
+  3 .note.gnu.avr.deviceinfo 0000003c  00000000  00000000  000001c8  2**2
+                  CONTENTS, READONLY
+  4 .debug_aranges 00000020  00000000  00000000  00000204  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  5 .debug_info   0000067e  00000000  00000000  00000224  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_abbrev 000005a4  00000000  00000000  000008a2  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_line   000002f8  00000000  00000000  00000e46  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_frame  00000024  00000000  00000000  00001140  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_str    0000033d  00000000  00000000  00001164  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_loc    00000151  00000000  00000000  000014a1  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 11 .debug_ranges 00000010  00000000  00000000  000015f2  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	0c 94 2a 00 	jmp	0x54	; 0x54 <__ctors_end>
+   4:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+   8:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+   c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  10:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  14:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  18:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  1c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  20:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  24:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  28:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  2c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  30:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  34:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  38:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  3c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  40:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  44:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  48:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  4c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  50:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+
+00000054 <__ctors_end>:
+  54:	11 24       	eor	r1, r1
+  56:	1f be       	out	0x3f, r1	; 63
+  58:	cf e5       	ldi	r28, 0x5F	; 95
+  5a:	d8 e0       	ldi	r29, 0x08	; 8
+  5c:	de bf       	out	0x3e, r29	; 62
+  5e:	cd bf       	out	0x3d, r28	; 61
+  60:	0e 94 36 00 	call	0x6c	; 0x6c <main>
+  64:	0c 94 a0 00 	jmp	0x140	; 0x140 <_exit>
+
+00000068 <__bad_interrupt>:
+  68:	0c 94 00 00 	jmp	0	; 0x0 <__vectors>
+
+0000006c <main>:
+#include <util/delay.h>
+
+
+
+int main(void){
+	MCUCSR= (1<< JTD);
+  6c:	80 e8       	ldi	r24, 0x80	; 128
+  6e:	84 bf       	out	0x34, r24	; 52
+	MCUCSR= (1<< JTD);
+  70:	84 bf       	out	0x34, r24	; 52
+	
+	DDRB = 0x00;
+  72:	17 ba       	out	0x17, r1	; 23
+	DDRA = 0x00; 
+  74:	1a ba       	out	0x1a, r1	; 26
+	DDRC = 0xFF;
+  76:	8f ef       	ldi	r24, 0xFF	; 255
+  78:	84 bb       	out	0x14, r24	; 20
+	DDRD= 0xFF;
+  7a:	81 bb       	out	0x11, r24	; 17
+	signed char data_1;
+	signed char data_2;
+	unsigned char c;
+	unsigned char zf;
+	while (1) {
+		c = PINA;
+  7c:	89 b3       	in	r24, 0x19	; 25
+		r_1 = (c & 0x0F);	//take the lower 4 bit of the port
+  7e:	28 2f       	mov	r18, r24
+  80:	2f 70       	andi	r18, 0x0F	; 15
+		r_2 = (c>>4);	//take the upper 4 bit of the port
+  82:	48 2f       	mov	r20, r24
+  84:	42 95       	swap	r20
+  86:	4f 70       	andi	r20, 0x0F	; 15
+		c = PINB;
+  88:	36 b3       	in	r19, 0x16	; 22
+		alu_op = (c & 0x0E) >> 1;// take bit from pb1 to pb3	
+  8a:	83 2f       	mov	r24, r19
+  8c:	8e 70       	andi	r24, 0x0E	; 14
+  8e:	90 e0       	ldi	r25, 0x00	; 0
+  90:	95 95       	asr	r25
+  92:	87 95       	ror	r24
+  94:	58 2f       	mov	r21, r24
+		alu_src = (c & 0x01);    // take bit from pb0
+		r_3 = (c >> 4);	    //take the upper 4 bit of the port
+  96:	e3 2f       	mov	r30, r19
+  98:	e2 95       	swap	r30
+  9a:	ef 70       	andi	r30, 0x0F	; 15
+		if (alu_src == 0x00) {
+  9c:	73 2f       	mov	r23, r19
+  9e:	71 70       	andi	r23, 0x01	; 1
+  a0:	30 fd       	sbrc	r19, 0
+  a2:	02 c0       	rjmp	.+4      	; 0xa8 <main+0x3c>
+			data_2 = r_2;
+  a4:	64 2f       	mov	r22, r20
+  a6:	03 c0       	rjmp	.+6      	; 0xae <main+0x42>
+		} else if(alu_src==0x01){
+  a8:	71 30       	cpi	r23, 0x01	; 1
+  aa:	09 f4       	brne	.+2      	; 0xae <main+0x42>
+			data_2 = r_3;
+  ac:	6e 2f       	mov	r22, r30
+		}
+		
+		data_1 = r_1;
+		
+		if (!(alu_op)) {
+  ae:	51 11       	cpse	r21, r1
+  b0:	03 c0       	rjmp	.+6      	; 0xb8 <main+0x4c>
+			alu_result = data_1 + data_2;
+  b2:	86 2f       	mov	r24, r22
+  b4:	82 0f       	add	r24, r18
+  b6:	33 c0       	rjmp	.+102    	; 0x11e <main+0xb2>
+		}else if ((alu_op & 0x01)) {
+  b8:	80 ff       	sbrs	r24, 0
+  ba:	03 c0       	rjmp	.+6      	; 0xc2 <main+0x56>
+			alu_result = data_1 - data_2;
+  bc:	82 2f       	mov	r24, r18
+  be:	86 1b       	sub	r24, r22
+  c0:	2e c0       	rjmp	.+92     	; 0x11e <main+0xb2>
+			//alu_result = 0x02;
+			
+		}else if (alu_op & 0x02) {
+  c2:	81 ff       	sbrs	r24, 1
+  c4:	03 c0       	rjmp	.+6      	; 0xcc <main+0x60>
+			alu_result = data_1 & data_2;
+  c6:	86 2f       	mov	r24, r22
+  c8:	82 23       	and	r24, r18
+  ca:	29 c0       	rjmp	.+82     	; 0x11e <main+0xb2>
+		}else if (alu_op & 0x03) {
+  cc:	ac 01       	movw	r20, r24
+  ce:	43 70       	andi	r20, 0x03	; 3
+  d0:	55 27       	eor	r21, r21
+  d2:	45 2b       	or	r20, r21
+  d4:	19 f0       	breq	.+6      	; 0xdc <main+0x70>
+			alu_result = data_1 | data_2;
+  d6:	86 2f       	mov	r24, r22
+  d8:	82 2b       	or	r24, r18
+  da:	21 c0       	rjmp	.+66     	; 0x11e <main+0xb2>
+		}else if (alu_op & 0x04) {
+  dc:	82 ff       	sbrs	r24, 2
+  de:	07 c0       	rjmp	.+14     	; 0xee <main+0x82>
+			alu_result = data_1 << data_2;
+  e0:	82 2f       	mov	r24, r18
+  e2:	06 2e       	mov	r0, r22
+  e4:	01 c0       	rjmp	.+2      	; 0xe8 <main+0x7c>
+  e6:	88 0f       	add	r24, r24
+  e8:	0a 94       	dec	r0
+  ea:	ea f7       	brpl	.-6      	; 0xe6 <main+0x7a>
+  ec:	18 c0       	rjmp	.+48     	; 0x11e <main+0xb2>
+		}else if (alu_op & 0x05) {
+  ee:	ac 01       	movw	r20, r24
+  f0:	45 70       	andi	r20, 0x05	; 5
+  f2:	55 27       	eor	r21, r21
+  f4:	45 2b       	or	r20, r21
+  f6:	51 f0       	breq	.+20     	; 0x10c <main+0xa0>
+			alu_result = data_1 >> data_2;
+  f8:	82 2f       	mov	r24, r18
+  fa:	22 0f       	add	r18, r18
+  fc:	99 0b       	sbc	r25, r25
+  fe:	06 2e       	mov	r0, r22
+ 100:	02 c0       	rjmp	.+4      	; 0x106 <main+0x9a>
+ 102:	95 95       	asr	r25
+ 104:	87 95       	ror	r24
+ 106:	0a 94       	dec	r0
+ 108:	e2 f7       	brpl	.-8      	; 0x102 <main+0x96>
+ 10a:	09 c0       	rjmp	.+18     	; 0x11e <main+0xb2>
+		}else if (alu_op & 0x06) {
+ 10c:	86 70       	andi	r24, 0x06	; 6
+ 10e:	99 27       	eor	r25, r25
+ 110:	89 2b       	or	r24, r25
+ 112:	21 f0       	breq	.+8      	; 0x11c <main+0xb0>
+			alu_result = ~(data_1 | data_2);
+ 114:	86 2f       	mov	r24, r22
+ 116:	82 2b       	or	r24, r18
+ 118:	80 95       	com	r24
+ 11a:	01 c0       	rjmp	.+2      	; 0x11e <main+0xb2>
+		} else {
+			alu_result = -1;
+ 11c:	8f ef       	ldi	r24, 0xFF	; 255
+		}
+		
+		if (alu_result == 0) {
+ 11e:	81 11       	cpse	r24, r1
+ 120:	02 c0       	rjmp	.+4      	; 0x126 <main+0xba>
+			zf = 1;
+ 122:	91 e0       	ldi	r25, 0x01	; 1
+ 124:	01 c0       	rjmp	.+2      	; 0x128 <main+0xbc>
+		}else {
+			zf = 0;
+ 126:	90 e0       	ldi	r25, 0x00	; 0
+		}
+		PORTC = zf<<7;
+ 128:	97 95       	ror	r25
+ 12a:	99 27       	eor	r25, r25
+ 12c:	97 95       	ror	r25
+ 12e:	95 bb       	out	0x15, r25	; 21
+		PORTD=alu_result;
+ 130:	82 bb       	out	0x12, r24	; 18
+	#else
+		//round up by default
+		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+	#endif
+
+	__builtin_avr_delay_cycles(__ticks_dc);
+ 132:	87 ea       	ldi	r24, 0xA7	; 167
+ 134:	91 e6       	ldi	r25, 0x61	; 97
+ 136:	01 97       	sbiw	r24, 0x01	; 1
+ 138:	f1 f7       	brne	.-4      	; 0x136 <main+0xca>
+ 13a:	00 c0       	rjmp	.+0      	; 0x13c <main+0xd0>
+ 13c:	00 00       	nop
+ 13e:	9e cf       	rjmp	.-196    	; 0x7c <main+0x10>
+
+00000140 <_exit>:
+ 140:	f8 94       	cli
+
+00000142 <__stop_program>:
+ 142:	ff cf       	rjmp	.-2      	; 0x142 <__stop_program>
