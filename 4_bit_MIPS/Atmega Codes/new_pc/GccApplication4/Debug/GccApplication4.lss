@@ -1,0 +1,281 @@
+
+GccApplication4.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         00000132  00000000  00000000  00000054  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .data         00000000  00800060  00800060  00000186  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  2 .comment      00000030  00000000  00000000  00000186  2**0
+                  CONTENTS, READONLY
+  3 .note.gnu.avr.deviceinfo 0000003c  00000000  00000000  000001b8  2**2
+                  CONTENTS, READONLY
+  4 .debug_aranges 00000020  00000000  00000000  000001f4  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  5 .debug_info   000006e6  00000000  00000000  00000214  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_abbrev 000005a4  00000000  00000000  000008fa  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_line   0000030b  00000000  00000000  00000e9e  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_frame  00000024  00000000  00000000  000011ac  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_str    00000347  00000000  00000000  000011d0  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_loc    00000131  00000000  00000000  00001517  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 11 .debug_ranges 00000010  00000000  00000000  00001648  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	0c 94 2a 00 	jmp	0x54	; 0x54 <__ctors_end>
+   4:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+   8:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+   c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  10:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  14:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  18:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  1c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  20:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  24:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  28:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  2c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  30:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  34:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  38:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  3c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  40:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  44:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  48:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  4c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  50:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+
+00000054 <__ctors_end>:
+  54:	11 24       	eor	r1, r1
+  56:	1f be       	out	0x3f, r1	; 63
+  58:	cf e5       	ldi	r28, 0x5F	; 95
+  5a:	d8 e0       	ldi	r29, 0x08	; 8
+  5c:	de bf       	out	0x3e, r29	; 62
+  5e:	cd bf       	out	0x3d, r28	; 61
+  60:	0e 94 36 00 	call	0x6c	; 0x6c <main>
+  64:	0c 94 97 00 	jmp	0x12e	; 0x12e <_exit>
+
+00000068 <__bad_interrupt>:
+  68:	0c 94 00 00 	jmp	0	; 0x0 <__vectors>
+
+0000006c <main>:
+#include <util/delay.h>
+
+
+int main(void)
+{
+	MCUCSR= (1<< JTD);
+  6c:	80 e8       	ldi	r24, 0x80	; 128
+  6e:	84 bf       	out	0x34, r24	; 52
+	MCUCSR= (1<< JTD);
+  70:	84 bf       	out	0x34, r24	; 52
+	//pa1 - bneq
+	//pa2 - zf
+	//pa3 - j
+	//pa7 - in
+	//
+	DDRA=0x00;//input
+  72:	1a ba       	out	0x1a, r1	; 26
+	DDRB=0xff;//output
+  74:	8f ef       	ldi	r24, 0xFF	; 255
+  76:	87 bb       	out	0x17, r24	; 23
+	DDRC=0x00;
+  78:	14 ba       	out	0x14, r1	; 20
+	DDRD=0x00;
+  7a:	11 ba       	out	0x11, r1	; 17
+{
+	MCUCSR= (1<< JTD);
+	MCUCSR= (1<< JTD);
+
+	
+	unsigned char pc=0x00;
+  7c:	10 e0       	ldi	r17, 0x00	; 0
+	unsigned char s;
+	unsigned char j_select=0;
+	
+	while (1)
+	{
+		PORTB=pc;
+  7e:	18 bb       	out	0x18, r17	; 24
+		c=PIND;
+  80:	e0 b3       	in	r30, 0x10	; 16
+		reg1=(c&0x0F); //taking the lower 4 bit of pin
+  82:	3e 2f       	mov	r19, r30
+  84:	3f 70       	andi	r19, 0x0F	; 15
+		reg2=(c&0xF0)>>4;		//taking the higher 4 bit of the pin
+  86:	ce 2f       	mov	r28, r30
+  88:	c2 95       	swap	r28
+  8a:	cf 70       	andi	r28, 0x0F	; 15
+		c=PINC;
+  8c:	83 b3       	in	r24, 0x13	; 19
+		reg3=(c&0x0F);	//taking the lower 4 bit of the pin
+  8e:	d8 2f       	mov	r29, r24
+  90:	df 70       	andi	r29, 0x0F	; 15
+		c=PINA;
+  92:	99 b3       	in	r25, 0x19	; 25
+		beq=(c&0x01);
+  94:	09 2f       	mov	r16, r25
+  96:	01 70       	andi	r16, 0x01	; 1
+		bneq=(c&0x02)>>1;
+  98:	a9 2f       	mov	r26, r25
+  9a:	a2 70       	andi	r26, 0x02	; 2
+  9c:	b0 e0       	ldi	r27, 0x00	; 0
+  9e:	b5 95       	asr	r27
+  a0:	a7 95       	ror	r26
+		zf=(c&0x04)>>2;
+  a2:	69 2f       	mov	r22, r25
+  a4:	64 70       	andi	r22, 0x04	; 4
+  a6:	70 e0       	ldi	r23, 0x00	; 0
+  a8:	75 95       	asr	r23
+  aa:	67 95       	ror	r22
+  ac:	75 95       	asr	r23
+  ae:	67 95       	ror	r22
+		j=(c&0x08)>>3;
+  b0:	49 2f       	mov	r20, r25
+  b2:	48 70       	andi	r20, 0x08	; 8
+  b4:	50 e0       	ldi	r21, 0x00	; 0
+  b6:	55 95       	asr	r21
+  b8:	47 95       	ror	r20
+  ba:	55 95       	asr	r21
+  bc:	47 95       	ror	r20
+  be:	55 95       	asr	r21
+  c0:	47 95       	ror	r20
+		in=(c&0x80)>>7;
+  c2:	29 2f       	mov	r18, r25
+  c4:	22 1f       	adc	r18, r18
+  c6:	22 27       	eor	r18, r18
+  c8:	22 1f       	adc	r18, r18
+		jump = reg2 | (reg1<<4);
+  ca:	90 e1       	ldi	r25, 0x10	; 16
+  cc:	39 9f       	mul	r19, r25
+  ce:	f0 01       	movw	r30, r0
+  d0:	11 24       	eor	r1, r1
+  d2:	ec 2b       	or	r30, r28
+		
+		pc2=pc+1;
+  d4:	31 e0       	ldi	r19, 0x01	; 1
+  d6:	31 0f       	add	r19, r17
+		s=(reg3&0x08)>>3;
+  d8:	88 70       	andi	r24, 0x08	; 8
+  da:	90 e0       	ldi	r25, 0x00	; 0
+  dc:	95 95       	asr	r25
+  de:	87 95       	ror	r24
+  e0:	95 95       	asr	r25
+  e2:	87 95       	ror	r24
+  e4:	95 95       	asr	r25
+  e6:	87 95       	ror	r24
+		if(s&0x01){
+  e8:	80 fd       	sbrc	r24, 0
+			offset=(reg3)|(0xF0);
+  ea:	d0 6f       	ori	r29, 0xF0	; 240
+		}
+		else {
+			offset = (reg3) | (0x00);
+		}
+		pcb =pc2+offset;
+  ec:	d3 0f       	add	r29, r19
+		j_select=0;
+		if(zf&0x01){
+  ee:	60 ff       	sbrs	r22, 0
+  f0:	04 c0       	rjmp	.+8      	; 0xfa <main+0x8e>
+			if(beq&0x01){
+  f2:	01 11       	cpse	r16, r1
+  f4:	06 c0       	rjmp	.+12     	; 0x102 <main+0x96>
+		}
+		else {
+			offset = (reg3) | (0x00);
+		}
+		pcb =pc2+offset;
+		j_select=0;
+  f6:	80 e0       	ldi	r24, 0x00	; 0
+  f8:	07 c0       	rjmp	.+14     	; 0x108 <main+0x9c>
+			if(beq&0x01){
+				j_select=1;
+			}
+		}
+		else{
+			if(bneq&0x01){
+  fa:	a0 fd       	sbrc	r26, 0
+  fc:	04 c0       	rjmp	.+8      	; 0x106 <main+0x9a>
+		}
+		else {
+			offset = (reg3) | (0x00);
+		}
+		pcb =pc2+offset;
+		j_select=0;
+  fe:	80 e0       	ldi	r24, 0x00	; 0
+ 100:	03 c0       	rjmp	.+6      	; 0x108 <main+0x9c>
+		if(zf&0x01){
+			if(beq&0x01){
+				j_select=1;
+ 102:	81 e0       	ldi	r24, 0x01	; 1
+ 104:	01 c0       	rjmp	.+2      	; 0x108 <main+0x9c>
+			}
+		}
+		else{
+			if(bneq&0x01){
+				j_select=1;
+ 106:	81 e0       	ldi	r24, 0x01	; 1
+			}
+		}
+		if(j_select&0x01){
+ 108:	81 70       	andi	r24, 0x01	; 1
+ 10a:	09 f0       	breq	.+2      	; 0x10e <main+0xa2>
+			pc3=pcb;
+ 10c:	3d 2f       	mov	r19, r29
+			}else {
+			pc3=pc2;
+		}
+		
+		if(j&0x01){
+ 10e:	40 fd       	sbrc	r20, 0
+			pcout=jump;
+ 110:	3e 2f       	mov	r19, r30
+		}
+		else {
+			pcout = pc3;
+		}
+		
+		if(!in){
+ 112:	21 11       	cpse	r18, r1
+ 114:	b4 cf       	rjmp	.-152    	; 0x7e <main+0x12>
+			pc=pcout;
+			PORTB = pc;
+ 116:	38 bb       	out	0x18, r19	; 24
+	#else
+		//round up by default
+		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+	#endif
+
+	__builtin_avr_delay_cycles(__ticks_dc);
+ 118:	2f e9       	ldi	r18, 0x9F	; 159
+ 11a:	86 e8       	ldi	r24, 0x86	; 134
+ 11c:	91 e0       	ldi	r25, 0x01	; 1
+ 11e:	21 50       	subi	r18, 0x01	; 1
+ 120:	80 40       	sbci	r24, 0x00	; 0
+ 122:	90 40       	sbci	r25, 0x00	; 0
+ 124:	e1 f7       	brne	.-8      	; 0x11e <main+0xb2>
+ 126:	00 c0       	rjmp	.+0      	; 0x128 <main+0xbc>
+ 128:	00 00       	nop
+		else {
+			pcout = pc3;
+		}
+		
+		if(!in){
+			pc=pcout;
+ 12a:	13 2f       	mov	r17, r19
+ 12c:	a8 cf       	rjmp	.-176    	; 0x7e <main+0x12>
+
+0000012e <_exit>:
+ 12e:	f8 94       	cli
+
+00000130 <__stop_program>:
+ 130:	ff cf       	rjmp	.-2      	; 0x130 <__stop_program>
